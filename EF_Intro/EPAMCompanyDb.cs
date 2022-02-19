@@ -25,7 +25,45 @@ namespace EF_Intro
         {
             base.OnModelCreating(modelBuilder);
 
-            // You can find the FluentAPI configurations in FluentAPI branch
+            // FluentAPI configurations
+            modelBuilder.Entity<Worker>().ToTable("Employees");          // set table name in db
+            modelBuilder.Entity<Worker>().Property(w => w.Name)
+                                            .IsRequired()                // set not null
+                                            .HasMaxLength(200)           // set max length(NVarChar(200))
+                                            .HasColumnName("FirstName"); // set column name in db
+            modelBuilder.Entity<Worker>().Property(w => w.Surname)
+                                            .IsRequired()
+                                            .HasMaxLength(200)
+                                            .HasColumnName("LastName");
+            modelBuilder.Entity<Worker>().Ignore(w => w.FullName);       // only in model
+            modelBuilder.Entity<Worker>().Property(w => w.Address).HasMaxLength(350);
+
+            modelBuilder.Entity<Project>().Property(p => p.Title)
+                                            .IsRequired()
+                                            .HasMaxLength(200);
+
+            modelBuilder.Entity<Department>().HasKey(d => d.Number);     // set primary key
+            modelBuilder.Entity<Department>().Property(d => d.Name)
+                                           .IsRequired()
+                                           .HasMaxLength(100);
+            modelBuilder.Entity<Department>().Property(d => d.Phone).HasMaxLength(30);
+
+            modelBuilder.Entity<Country>().Property(c => c.Name)
+                                            .IsRequired()
+                                            .HasMaxLength(100);
+
+            // Relationship configurations
+            // Relationship Type: 1...* (One to Many)
+            modelBuilder.Entity<Worker>().HasOne(w => w.Department)
+                                         .WithMany(d => d.Workers)
+                                         .IsRequired();
+            // Relationship Type: 0/1...* (Zero or One to Many)
+            modelBuilder.Entity<Worker>().HasOne(w => w.Country)
+                                         .WithMany(d => d.Workers)
+                                         .IsRequired(false);
+            // Relationship Type: *...* (Many to Many)
+            modelBuilder.Entity<Worker>().HasMany(w => w.Projects)
+                                         .WithMany(p => p.Workers);
 
             // Seed
             modelBuilder.SeedDepartments();
@@ -47,7 +85,6 @@ namespace EF_Intro
             Workers = new HashSet<Worker>();
         }
         public int Id { get; set; }
-        [Required, MaxLength(200)]
         public string Title { get; set; }
         public string Description { get; set; }
 
@@ -61,11 +98,8 @@ namespace EF_Intro
         {
             Workers = new HashSet<Worker>();
         }
-        [Key]   // set primary key
         public int Number { get; set; }
-        [Required, MaxLength(100)]
         public string Name { get; set; }
-        [MaxLength(30)]
         public string Phone { get; set; }
 
         // Navigation Properties
@@ -78,7 +112,6 @@ namespace EF_Intro
             Workers = new HashSet<Worker>();
         }
         public int Id { get; set; }
-        [Required, MaxLength(100)]
         public string Name { get; set; }
 
         // Navigation Properties
@@ -86,7 +119,6 @@ namespace EF_Intro
     }
 
     // Entities
-    [Table("Employees")] // set table name in db
     public class Worker
     {
         public Worker()
@@ -97,26 +129,16 @@ namespace EF_Intro
 
         // Primary Key: Id/ID/id EntityName+Id (WorkerId)
         public int Id { get; set; }
-        [Required]            // set not null
-        [MaxLength(200)]      // set max length (NVarChar(200))
-        [Column("FirstName")] // set column name in db
         public string Name { get; set; }
-        [Required, MaxLength(200), Column("LastName")]
         public string Surname { get; set; }
-        [NotMapped]           // only in model
         public string FullName => Name + " " + Surname;
         public DateTime? Birthdate { get; set; }
         public decimal Salary { get; set; }
-        [MaxLength(350)]
         public string Address { get; set; }
 
         // Navigation Properties
-        // Relationship Type: 1...* (One to Many)
-        [Required]
         public Department Department { get; set; }
-        // Relationship Type: 0/1...* (Zero or One to Many)
         public Country Country { get; set; }
-        // Relationship Type: *...* (Many to Many)
         public ICollection<Project> Projects { get; set; }
     }
 }
