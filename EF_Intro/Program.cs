@@ -32,7 +32,7 @@ namespace EF_Intro
 
             foreach (var w in result)
             {
-                Console.WriteLine($"Worker {w.Name} {w.Surname} has salary of {w.Salary}$\n" +
+                Console.WriteLine($"Worker {w.FullName} has salary of {w.Salary}$\n" +
                                 $"Country: {w.Country?.Name}\n" +
                                 $"Address: {w.Address ?? "no address"}\n" +
                                 $"Department: {w.Department.Name}\n" +

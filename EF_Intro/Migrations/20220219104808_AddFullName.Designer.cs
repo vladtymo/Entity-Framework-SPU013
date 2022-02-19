@@ -4,14 +4,16 @@ using EF_Intro;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EF_Intro.Migrations
 {
     [DbContext(typeof(EPAMCompanyDb))]
-    partial class EPAMCompanyDbModelSnapshot : ModelSnapshot
+    [Migration("20220219104808_AddFullName")]
+    partial class AddFullName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

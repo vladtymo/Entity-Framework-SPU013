@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,66 +25,12 @@ namespace EF_Intro
         {
             base.OnModelCreating(modelBuilder);
 
+            // You can find the FluentAPI configurations in FluentAPI branch
+
             // Seed
-            modelBuilder.Entity<Department>().HasData(new[]
-            {
-                new Department()
-                {
-                    Number = 1,
-                    Name = "Security Programming",
-                    Phone = "3455-223-44"
-                },
-                new Department()
-                {
-                    Number = 2,
-                    Name = "Design",
-                    Phone = "45462-223-44"
-                },
-                new Department()
-                {
-                    Number = 3,
-                    Name = "Admin Department",
-                    Phone = "101010-44-44"
-                }
-            });
-            modelBuilder.Entity<Country>().HasData(new[]
-            {
-                new Country()
-                {
-                    Id = 1,
-                    Name = "Ukraine",
-                },
-                new Country()
-                {
-                    Id = 2,
-                    Name = "Poland",
-                },
-                new Country()
-                {
-                    Id = 3,
-                    Name = "Italy",
-                },
-                new Country()
-                {
-                    Id = 4,
-                    Name = "Spain",
-                }
-            });
-            modelBuilder.Entity<Project>().HasData(new[]
-            {
-                new Project()
-                {
-                    Id = 1,
-                    Title = "Eco Project in Rivne",
-                    Description = "Helps people to sort the rubbish."
-                },
-                new Project()
-                {
-                    Id = 2,
-                    Title = "Vets-Pets",
-                    Description = "Helps people to find animals."
-                }
-            });
+            modelBuilder.SeedDepartments();
+            modelBuilder.SeedCountries();
+            modelBuilder.SeedProjects();
         }
 
         // Collections (tables in db)
@@ -139,6 +86,7 @@ namespace EF_Intro
     }
 
     // Entities
+    [Table("Employees")] // set table name in db
     public class Worker
     {
         public Worker()
@@ -149,11 +97,14 @@ namespace EF_Intro
 
         // Primary Key: Id/ID/id EntityName+Id (WorkerId)
         public int Id { get; set; }
-        [Required]          // set not null
-        [MaxLength(200)]    // set max length (NVarChar(200))
+        [Required]            // set not null
+        [MaxLength(200)]      // set max length (NVarChar(200))
+        [Column("FirstName")] // set column name in db
         public string Name { get; set; }
-        [Required, MaxLength(200)]
+        [Required, MaxLength(200), Column("LastName")]
         public string Surname { get; set; }
+        [NotMapped]           // only in model
+        public string FullName => Name + " " + Surname;
         public DateTime? Birthdate { get; set; }
         public decimal Salary { get; set; }
         [MaxLength(350)]
